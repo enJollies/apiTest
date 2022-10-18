@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['namespace' => 'Api'], function() {
+
+    Route::group(['prefix' => 'users'], function() {
+        Route::get('/', 'UserController@index')->name('users.index');
+        Route::post('/', 'UserController@store')->name('users.store');
+        Route::get('/{user}', 'UserController@show')->whereNumber('user')->name('users.show');
+        Route::patch('/{user}', 'UserController@update')->whereNumber('user')->name('users.update');
+        Route::delete('/{user}', 'UserController@destroy')->whereNumber('user')->name('users.destroy');
+    });
 });
