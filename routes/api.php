@@ -22,6 +22,9 @@ Route::group(['namespace' => 'Api'], function() {
         Route::get('/{user}', 'UserController@show')->whereNumber('user')->name('users.show');
         Route::patch('/{user}', 'UserController@update')->whereNumber('user')->name('users.update');
         Route::delete('/{user}', 'UserController@destroy')->whereNumber('user')->name('users.destroy');
+        Route::post('/subscribe', 'UserController@subscribe')->name('users.subscribe');
+        Route::post('/unsubscribe', 'UserController@unsubscribe')->name('users.unsubscribe');
+        Route::post('/unsubscribe/all', 'UserController@unsubscribeAll')->name('users.unsubscribeAll');
     });
 
     Route::group(['prefix' => 'sections'], function() {

@@ -12,14 +12,12 @@ use App\Http\Requests\Api\Section\UpdateRequest;
 class SectionController extends Controller
 {
 
-    public function index()
-    {
+    public function index() {
         return SectionResource::collection(Section::all());
     }
 
 
-    public function store(StoreRequest $request)
-    {
+    public function store(StoreRequest $request) {
         $data = $request->validated();
         $createdSection = Section::create($data);
 
@@ -27,14 +25,12 @@ class SectionController extends Controller
     }
 
 
-    public function show(Section $section)
-    {
+    public function show(Section $section) {
         return new SectionResource($section);
     }
 
 
-    public function update(UpdateRequest $request, Section $section)
-    {
+    public function update(UpdateRequest $request, Section $section) {
         $data = $request->validated();
         $section->update($data);
         $section->fresh();
@@ -43,8 +39,7 @@ class SectionController extends Controller
     }
 
 
-    public function destroy(Section $section)
-    {
+    public function destroy(Section $section) {
         $section->users()->detach();
         $section->delete();
         return true;
