@@ -46,8 +46,12 @@ class SectionController extends Controller
         return true;
     }
 
-    public function showSubs(Section $section) {
+    public function showSubs(Request $request) {
 
-        return UserResource::collection($section->users);
+        $data = $request->validate([
+            'section_id' => 'required | integer | exists:sections,id'
+        ]);
+        $currentSection = Section::findOrFail($data['section_id']);
+        return UserResource::collection($currentSection->users);
     }
 }

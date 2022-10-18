@@ -84,9 +84,8 @@ class UserController extends Controller
         return new UserResource($user->fresh());
     }
 
-    public function showSubSections(User $user) {
-        // $currentUser = auth()->user();
-        
-        return SectionResource::collection($user->sections);
+    public function showSubSections() {
+        $currentUser = auth()->user();
+        return SectionResource::collection($currentUser->sections);
     }
 }

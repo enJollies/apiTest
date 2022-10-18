@@ -26,7 +26,7 @@ Route::group(['namespace' => 'Api'], function() {
         Route::post('/unsubscribe', 'UserController@unsubscribe')->name('users.unsubscribe');
         Route::post('/unsubscribe/all', 'UserController@unsubscribeAll')->name('users.unsubscribeAll');
 
-        Route::get('/{user}/show/sections', 'UserController@showSubSections')->whereNumber('user')->name('users.showSubSections');
+        Route::get('/show/sections', 'UserController@showSubSections')->whereNumber('user')->name('users.showSubSections');
     });
 
     Route::group(['prefix' => 'sections'], function() {
@@ -36,6 +36,20 @@ Route::group(['namespace' => 'Api'], function() {
         Route::patch('/{section}', 'SectionController@update')->whereNumber('section')->name('sections.update');
         Route::delete('/{section}', 'SectionController@destroy')->whereNumber('section')->name('sections.destroy');
 
-        Route::get('/{section}/show/subs', 'SectionController@showSubs')->whereNumber('section')->name('sections.showSubs');
+        Route::post('/show/subs', 'SectionController@showSubs')->whereNumber('section')->name('sections.showSubs')->middleware('jwt.auth');
     });
+});
+
+Route::group([
+
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function ($router) {
+
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+
 });
