@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Api\User;
+namespace App\Http\Requests\Api\Section;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateRequest extends FormRequest
+class StoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +24,7 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'string',
-            'email' => [
-                'email',
-                Rule::unique('users')->ignore($this->input('id'))
-            ],
+            'title' => 'required | string'
         ];
     }
 }

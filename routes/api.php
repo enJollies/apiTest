@@ -23,4 +23,12 @@ Route::group(['namespace' => 'Api'], function() {
         Route::patch('/{user}', 'UserController@update')->whereNumber('user')->name('users.update');
         Route::delete('/{user}', 'UserController@destroy')->whereNumber('user')->name('users.destroy');
     });
+
+    Route::group(['prefix' => 'sections'], function() {
+        Route::get('/', 'SectionController@index')->name('sections.index');
+        Route::post('/', 'SectionController@store')->name('sections.store');
+        Route::get('/{section}', 'SectionController@show')->whereNumber('section')->name('sections.show');
+        Route::patch('/{section}', 'SectionController@update')->whereNumber('section')->name('sections.update');
+        Route::delete('/{section}', 'SectionController@destroy')->whereNumber('section')->name('sections.destroy');
+    });
 });

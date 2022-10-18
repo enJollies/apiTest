@@ -12,64 +12,40 @@ use App\Http\Requests\Api\User\UpdateRequest;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         return UserResource::collection(User::all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(StoreRequest $request)
     {
         $data = $request->validated();
         $data['password'] = isset($data['password']) ? Hash::make($data['password']) : Hash::make('password');
-        User::create($data);
+        $createdUser = User::create($data);
 
-        return redirect()->route('users.index');
+        return new UserResource($createdUser);
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(User $user)
     {
         return new UserResource($user);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(UpdateRequest $request, User $user)
     {
         $data = $request->validated();
         $user->update($data);
+        $user->fresh();
 
-        return redirect()->route('users.show', $user->id);
+        return new UserResource($user);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy(User $user)
     {
         $user->sections()->detach();

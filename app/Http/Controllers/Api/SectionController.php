@@ -4,61 +4,49 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Section;
+use App\Http\Resources\SectionResource;
+use App\Http\Requests\Api\Section\StoreRequest;
+use App\Http\Requests\Api\Section\UpdateRequest;
 
 class SectionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        return SectionResource::collection(Section::all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(StoreRequest $request)
     {
-        //
+        $data = $request->validated();
+        $createdSection = Section::create($data);
+
+        return new SectionResource($createdSection);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+
+    public function show(Section $section)
     {
-        //
+        return new SectionResource($section);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+
+    public function update(UpdateRequest $request, Section $section)
     {
-        //
+        $data = $request->validated();
+        $section->update($data);
+        $section->fresh();
+
+        return new SectionResource($section);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+
+    public function destroy(Section $section)
     {
-        //
+        $section->users()->detach();
+        $section->delete();
+        return true;
     }
 }
