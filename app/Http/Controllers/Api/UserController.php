@@ -71,7 +71,7 @@ class UserController extends Controller
         }
 
         $user->sections()->detach($data['section_id']);
-        return SectionResource::collection($user->fresh()->sections);;
+        return SectionResource::collection($user->fresh()->sections);
     }
 
     public function unsubscribeAll(Request $request) {
@@ -82,5 +82,11 @@ class UserController extends Controller
         $user->sections()->detach();
 
         return new UserResource($user->fresh());
+    }
+
+    public function showSubSections(User $user) {
+        // $currentUser = auth()->user();
+        
+        return SectionResource::collection($user->sections);
     }
 }

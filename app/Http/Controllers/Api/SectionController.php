@@ -8,6 +8,7 @@ use App\Models\Section;
 use App\Http\Resources\SectionResource;
 use App\Http\Requests\Api\Section\StoreRequest;
 use App\Http\Requests\Api\Section\UpdateRequest;
+use App\Http\Resources\UserResource;
 
 class SectionController extends Controller
 {
@@ -43,5 +44,10 @@ class SectionController extends Controller
         $section->users()->detach();
         $section->delete();
         return true;
+    }
+
+    public function showSubs(Section $section) {
+
+        return UserResource::collection($section->users);
     }
 }
