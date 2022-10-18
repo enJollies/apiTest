@@ -26,7 +26,7 @@ Route::group(['namespace' => 'Api'], function() {
         Route::post('/unsubscribe', 'UserController@unsubscribe')->name('users.unsubscribe');
         Route::post('/unsubscribe/all', 'UserController@unsubscribeAll')->name('users.unsubscribeAll');
 
-        Route::get('/show/sections', 'UserController@showSubSections')->whereNumber('user')->name('users.showSubSections');
+        Route::post('/show/sections', 'UserController@showSubSections')->whereNumber('user')->name('users.showSubSections');
     });
 
     Route::group(['prefix' => 'sections'], function() {

@@ -11,9 +11,15 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Api\User\UpdateRequest;
 use App\Http\Requests\Api\User\SubscribeRequest;
 use App\Http\Resources\SectionResource;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
+    private $service;
+
+    public function __construct() {
+        $this->service = new UserService();
+    }
 
     public function index() {
         return UserResource::collection(User::all());
@@ -84,8 +90,23 @@ class UserController extends Controller
         return new UserResource($user->fresh());
     }
 
-    public function showSubSections() {
+    public function showSubSections(Request $request) {
+        $data = $request->validate([
+            'limit' => 'integer'
+        ]);
+        $limit = $data['limit'] ?? 5;
         $currentUser = auth()->user();
-        return SectionResource::collection($currentUser->sections);
+        $sections = $currentUser->sections->take($limit);
+
+        switch($request->header('Accept')) {
+            case 'application/xml':
+                $array = $this->service->generateXmlArray($sections, 'title');
+                return response()->xml($array);
+            default:
+                return SectionResource::collection($sections);
+        }
     }
+
+
 }
+
