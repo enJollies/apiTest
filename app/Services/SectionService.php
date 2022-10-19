@@ -2,7 +2,7 @@
 namespace App\Services;
 use Illuminate\Database\Eloquent\Collection;
 
-class SectionService {
+class SectionService extends Service {
 
     public function generateXmlArray(Collection $collection, $titleField) {
         $xmlArray = [];

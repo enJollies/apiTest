@@ -19,8 +19,16 @@ class SectionController extends Controller
         $this->service = new SectionService();
     }
 
-    public function index() {
-        return SectionResource::collection(Section::all());
+    public function index(Request $request) {
+
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => Section::all(),
+            'resource' => SectionResource::class,
+            'isCollection' => true
+        ]);
+
+        return $responce;
     }
 
 
@@ -28,21 +36,42 @@ class SectionController extends Controller
         $data = $request->validated();
         $createdSection = Section::create($data);
 
-        return new SectionResource($createdSection);
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $createdSection,
+            'resource' => SectionResource::class,
+            'isCollection' => false
+        ]);
+
+        return $responce;
     }
 
 
-    public function show(Section $section) {
-        return new SectionResource($section);
+    public function show(Request $request, Section $section) {
+
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $section,
+            'resource' => SectionResource::class,
+            'isCollection' => false
+        ]);
+
+        return $responce;
     }
 
 
     public function update(UpdateRequest $request, Section $section) {
         $data = $request->validated();
         $section->update($data);
-        $section->fresh();
 
-        return new SectionResource($section);
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $section->fresh(),
+            'resource' => SectionResource::class,
+            'isCollection' => false
+        ]);
+
+        return $responce;
     }
 
 
@@ -62,12 +91,13 @@ class SectionController extends Controller
         $currentSection = Section::findOrFail($data['section_id']);
         $users = $currentSection->users->take($limit);
 
-        switch($request->header('Accept')) {
-            case 'application/xml':
-                $array = $this->service->generateXmlArray($users, 'name');
-                return response()->xml($array);
-            default:
-                return UserResource::collection($users);
-        }
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $users,
+            'resource' => UserResource::class,
+            'isCollection' => true
+        ]);
+
+        return $responce;
     }
 }

@@ -21,30 +21,60 @@ class UserController extends Controller
         $this->service = new UserService();
     }
 
-    public function index() {
-        return UserResource::collection(User::all());
+    public function index(Request $request) {
+
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => User::all(),
+            'resource' => UserResource::class,
+            'isCollection' => true
+        ]);
+
+        return $responce;
     }
 
 
     public function store(StoreRequest $request) {
+
         $data = $request->validated();
         $data['password'] = isset($data['password']) ? Hash::make($data['password']) : Hash::make('password');
         $createdUser = User::create($data);
 
-        return new UserResource($createdUser);
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $createdUser,
+            'resource' => UserResource::class,
+            'isCollection' => false
+        ]);
+
+        return $responce;
 
     }
 
 
-    public function show(User $user) {
-        return new UserResource($user);
+    public function show(Request $request, User $user) {
+
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $user,
+            'resource' => UserResource::class,
+            'isCollection' => false
+        ]);
+
+        return $responce;
     }
 
 
     public function update(UpdateRequest $request, User $user) {
         $data = $request->validated();
         $user->update($data);
-        $user->fresh();
+
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $user->fresh(),
+            'resource' => UserResource::class,
+            'isCollection' => false
+        ]);
 
         return new UserResource($user);
     }
@@ -65,7 +95,15 @@ class UserController extends Controller
         }
 
         $user->sections()->attach($data['section_id']);
-        return SectionResource::collection($user->fresh()->sections);
+
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $user->fresh()->sections,
+            'resource' => SectionResource::class,
+            'isCollection' => true
+        ]);
+
+        return $responce;
     }
 
     public function unsubscribe(SubscribeRequest $request) {
@@ -77,20 +115,38 @@ class UserController extends Controller
         }
 
         $user->sections()->detach($data['section_id']);
-        return SectionResource::collection($user->fresh()->sections);
+
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $user->fresh()->sections,
+            'resource' => SectionResource::class,
+            'isCollection' => true
+        ]);
+
+        return $responce;
     }
 
     public function unsubscribeAll(Request $request) {
+
         $data = $request->validate([
             'email' => 'required | email | exists:users'
         ]);
+
         $user = User::where('email', $data['email'])->firstOrFail();
         $user->sections()->detach();
 
-        return new UserResource($user->fresh());
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $user->fresh(),
+            'resource' => UserResource::class,
+            'isCollection' => false
+        ]);
+
+        return $responce;
     }
 
     public function showSubSections(Request $request) {
+
         $data = $request->validate([
             'limit' => 'integer'
         ]);
@@ -98,13 +154,14 @@ class UserController extends Controller
         $currentUser = auth()->user();
         $sections = $currentUser->sections->take($limit);
 
-        switch($request->header('Accept')) {
-            case 'application/xml':
-                $array = $this->service->generateXmlArray($sections, 'title');
-                return response()->xml($array);
-            default:
-                return SectionResource::collection($sections);
-        }
+        $responce = $this->service->generateResponce([
+            'request' => $request,
+            'result' => $sections,
+            'resource' => SectionResource::class,
+            'isCollection' => true
+        ]);
+
+        return $responce;
     }
 
 
